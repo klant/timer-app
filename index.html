@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#070a12" />
+  <title>计时器 · Timer</title>
+  <meta name="description" content="一个简洁好用的在线计时器：秒表、倒计时、番茄钟。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%235b9dff'/%3E%3Ccircle cx='50' cy='50' r='31' fill='%23070a12'/%3E%3Cpath d='M50 28v24l15 9' stroke='%23eef2ff' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-mode="stopwatch">
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◷</span>
+        <span class="brand-name">计时器</span>
+        <span class="brand-sub">Timer</span>
+      </div>
+      <div class="tools">
+        <button id="soundBtn" class="icon-btn" type="button" aria-pressed="true" title="提示音：开" aria-label="提示音开关">🔊</button>
+        <button id="notifyBtn" class="icon-btn" type="button" aria-pressed="false" title="桌面通知：关" aria-label="桌面通知开关">🔕</button>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="计时模式">
+      <button class="tab is-active" type="button" role="tab" data-mode="stopwatch" aria-selected="true" aria-controls="panel-stopwatch">秒表</button>
+      <button class="tab" type="button" role="tab" data-mode="countdown" aria-selected="false" aria-controls="panel-countdown">倒计时</button>
+      <button class="tab" type="button" role="tab" data-mode="pomodoro" aria-selected="false" aria-controls="panel-pomodoro">番茄钟</button>
+    </nav>
+
+    <main>
+      <!-- ── 秒表 ───────────────────────────────────────────── -->
+      <section class="panel is-active" id="panel-stopwatch" role="tabpanel" aria-label="秒表">
+        <div class="stopwatch-time" id="swTime">00:00.00</div>
+        <p class="hint">空格 开始 / 暂停 · L 计次 · R 重置</p>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="swStart" type="button">开始</button>
+          <button class="btn" id="swLap" type="button" disabled>计次</button>
+          <button class="btn btn-ghost" id="swReset" type="button" disabled>重置</button>
+        </div>
+
+        <div class="laps-wrap" id="lapsWrap" hidden>
+          <div class="laps-head" aria-hidden="true">
+            <span>#</span><span>分段时间</span><span>总时间</span>
+          </div>
+          <ol class="laps" id="lapList" aria-label="计次记录"></ol>
+        </div>
+      </section>
+
+      <!-- ── 倒计时 ─────────────────────────────────────────── -->
+      <section class="panel" id="panel-countdown" role="tabpanel" aria-label="倒计时" hidden>
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 320 320" aria-hidden="true">
+            <circle class="ring-track" cx="160" cy="160" r="148" />
+            <circle class="ring-progress" cx="160" cy="160" r="148" id="cdRing" />
+          </svg>
+          <div class="ring-inner">
+            <div class="time" id="cdTime">25:00</div>
+            <div class="status" id="cdStatus">准备开始</div>
+          </div>
+        </div>
+
+        <div class="presets" id="cdPresets" role="group" aria-label="预设时长">
+          <button type="button" data-min="1">1 分</button>
+          <button type="button" data-min="3">3 分</button>
+          <button type="button" data-min="5">5 分</button>
+          <button type="button" data-min="10">10 分</button>
+          <button type="button" data-min="15">15 分</button>
+          <button type="button" data-min="25" class="is-active">25 分</button>
+          <button type="button" data-min="45">45 分</button>
+          <button type="button" data-min="60">60 分</button>
+        </div>
+
+        <div class="custom-row">
+          <label>时 <input id="cdH" type="number" inputmode="numeric" min="0" max="99" value="0" aria-label="小时" /></label>
+          <label>分 <input id="cdM" type="number" inputmode="numeric" min="0" max="59" value="25" aria-label="分钟" /></label>
+          <label>秒 <input id="cdS" type="number" inputmode="numeric" min="0" max="59" value="0" aria-label="秒" /></label>
+          <button class="btn btn-small" id="cdApply" type="button">设定</button>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="cdStart" type="button">开始</button>
+          <button class="btn btn-ghost" id="cdReset" type="button" disabled>重置</button>
+        </div>
+      </section>
+
+      <!-- ── 番茄钟 ─────────────────────────────────────────── -->
+      <section class="panel" id="panel-pomodoro" role="tabpanel" aria-label="番茄钟" hidden>
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 320 320" aria-hidden="true">
+            <circle class="ring-track" cx="160" cy="160" r="148" />
+            <circle class="ring-progress" cx="160" cy="160" r="148" id="pmRing" />
+          </svg>
+          <div class="ring-inner">
+            <div class="phase" id="pmPhase">专注</div>
+            <div class="time" id="pmTime">25:00</div>
+            <div class="status" id="pmStatus">第 1 轮 · 准备开始</div>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <label>专注 <input id="pmWork" type="number" inputmode="numeric" min="1" max="120" value="25" aria-label="专注分钟数" /> 分</label>
+          <label>短休 <input id="pmShort" type="number" inputmode="numeric" min="1" max="60" value="5" aria-label="短休息分钟数" /> 分</label>
+          <label>长休 <input id="pmLong" type="number" inputmode="numeric" min="1" max="60" value="15" aria-label="长休息分钟数" /> 分</label>
+          <label class="checkbox"><input id="pmAuto" type="checkbox" checked /> 自动开始下一段</label>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="pmStart" type="button">开始</button>
+          <button class="btn" id="pmSkip" type="button">跳过</button>
+          <button class="btn btn-ghost" id="pmReset" type="button">重置</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
