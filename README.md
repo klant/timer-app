@@ -37,7 +37,7 @@
 部署到 GitHub Pages 后可直接访问：
 
 ```
-https://<你的用户名>.github.io/timer/
+https://klant.github.io/timer-app/
 ```
 
 ### 启用 GitHub Pages
@@ -79,7 +79,7 @@ npx serve .
 ## 📁 项目结构
 
 ```
-timer/
+timer-app/
 ├── index.html      # 页面结构
 ├── styles.css      # 样式与主题
 ├── app.js          # 计时逻辑、状态持久化
